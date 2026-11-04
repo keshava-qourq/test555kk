@@ -5,7 +5,7 @@
 <!-- sdlc:auto:start overview -->
 Chatbot
 
-**Documentation version:** v1
+**Documentation version:** v2
 <!-- sdlc:auto:end overview -->
 
 ## Contents
@@ -14,14 +14,14 @@ Chatbot
 | Document | State |
 |---|---|
 | [Requirements](requirements/README.md) | v1 approved |
-| [Architecture](architecture/README.md) | 1 entry |
+| [Architecture](architecture/README.md) | 19 entries |
 | [Development](development/README.md) | 1 entry |
 | [Testing](testing/README.md) | 1 entry |
 | [Deployment](deployment/README.md) | 1 entry |
 | [Maintenance](maintenance/README.md) | 1 entry |
-| [Data model](architecture/data-model.md) | not generated yet |
-| [API (OpenAPI)](architecture/api/openapi.yaml) | not generated yet |
-| [Decisions (ADRs)](architecture/adr/README.md) | 0 decisions |
+| [Data model](architecture/data-model.md) | generated |
+| [API (OpenAPI)](architecture/api/openapi.yaml) | generated |
+| [Decisions (ADRs)](architecture/adr/README.md) | 4 decisions |
 | [Sprint plan](development/sprint-plan.md) | not generated yet |
 | [Developer guide](development/developer-guide.md) | not generated yet |
 | [API reference](development/api-reference.md) | 0 routes |
@@ -31,7 +31,7 @@ Chatbot
 | [Runbook](deployment/runbook.md) | not deployed yet |
 | [Release notes](deployment/release-notes.md) | 0 releases |
 | [Traceability matrix](traceability-matrix.md) | 17 requirements |
-| [Changelog](CHANGELOG.md) | 1 version |
+| [Changelog](CHANGELOG.md) | 2 versions |
 <!-- sdlc:auto:end contents -->
 
 ## Open gaps
@@ -52,7 +52,22 @@ Chatbot
 
 ### Architecture
 
-- Architecture phase has not started -- no design decisions, screen inventory, or component architecture exist yet to document.
+- Input does not state who approved the architecture or on what date.
+- No explicit mapping is given from architecture elements to requirement IDs (US-001..US-017); traceability below is therefore left unlinked.
+- A 'GDPR-level privacy standard' is referenced but no formal regulatory/compliance skill or control checklist was supplied, so compliance coverage cannot be verified against a named regulation.
+- No requirement IDs are linked to this component in the input.
+- Retention period and backup/restore policy for this single data store are not specified.
+- No data-processing/region commitment for the OpenAI SaaS dependency is stated, which may be relevant to the EU-region privacy standard.
+- No data-processing/region commitment for the SendGrid SaaS dependency is stated.
+- No requirement IDs are linked to this critical path in the input.
+- No requirement IDs are linked to these entities in the input.
+- No explicit data retention/deletion schedule for conversations or follow-up requests beyond the ad-hoc GDPR deletion endpoint is stated.
+- No requirement IDs are linked to these endpoints in the input.
+- Authorization scheme for admin endpoints beyond JWT issuance at login is not detailed (e.g. token expiry, refresh).
+- No requirement IDs are linked to the deployment topology in the input.
+- 'Static hosting / dev server' for web-app leaves the actual production hosting mechanism unspecified.
+- No requirement IDs are linked to this decision in the input.
+- 'GDPR-level privacy standard' and 'audit controls' are referenced as motivation but no specific regulation or audit-control checklist is named for verification.
 
 ### Development
 

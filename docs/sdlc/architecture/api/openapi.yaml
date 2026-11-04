@@ -2,6 +2,394 @@
 openapi: 3.1.0
 info:
   title: TEST555
-  version: architecture-v0
+  version: architecture-v1
   description: Designed API from the approved architecture (not extracted from code).
-paths: {}
+paths:
+  /api/admin/conversations:
+    get:
+      summary: List logged visitor conversations with timestamps.
+      description: List logged visitor conversations with timestamps.
+      operationId: get_api_admin_conversations
+      parameters: []
+      responses:
+        '200':
+          description: '{ conversations[] }'
+      security:
+      - bearerAuth: []
+  /api/admin/conversations/{id}:
+    get:
+      summary: Return the full multi-turn exchange for a conversation.
+      description: Return the full multi-turn exchange for a conversation.
+      operationId: get_api_admin_conversations_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{ conversation, messages[] }'
+      security:
+      - bearerAuth: []
+  /api/admin/data-deletion:
+    post:
+      summary: Delete a visitor's personal data (contact details and relevant conversation
+        records) on request.
+      description: Delete a visitor's personal data (contact details and relevant
+        conversation records) on request.
+      operationId: post_api_admin_data_deletion
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{ contact_email | conversation_id }'
+      responses:
+        '200':
+          description: '{ deleted: true }'
+      security:
+      - bearerAuth: []
+  /api/admin/documents:
+    get:
+      summary: List uploaded documents with name, format and processing status.
+      description: List uploaded documents with name, format and processing status.
+      operationId: get_api_admin_documents
+      parameters: []
+      responses:
+        '200':
+          description: '{ documents[] }'
+      security:
+      - bearerAuth: []
+    post:
+      summary: Upload a PDF/Word/text file; stored in S3 and queued for processing,
+        returns immediately.
+      description: Upload a PDF/Word/text file; stored in S3 and queued for processing,
+        returns immediately.
+      operationId: post_api_admin_documents
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: multipart/form-data file
+      responses:
+        '200':
+          description: 202 { document_id, status }
+      security:
+      - bearerAuth: []
+  /api/admin/documents/{id}:
+    put:
+      summary: Replace a document with a new file; previous indexed content is superseded.
+      description: Replace a document with a new file; previous indexed content is
+        superseded.
+      operationId: put_api_admin_documents_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: multipart/form-data file
+      responses:
+        '200':
+          description: 202 { document_id, status }
+      security:
+      - bearerAuth: []
+    delete:
+      summary: Remove a document and its indexed chunks from retrieval and S3.
+      description: Remove a document and its indexed chunks from retrieval and S3.
+      operationId: delete_api_admin_documents_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '204'
+      security:
+      - bearerAuth: []
+  /api/admin/followups:
+    get:
+      summary: List captured follow-up requests with contact, question, timestamp
+        and status.
+      description: List captured follow-up requests with contact, question, timestamp
+        and status.
+      operationId: get_api_admin_followups
+      parameters: []
+      responses:
+        '200':
+          description: '{ followups[] }'
+      security:
+      - bearerAuth: []
+  /api/admin/followups/{id}:
+    patch:
+      summary: Mark a follow-up request as handled.
+      description: Mark a follow-up request as handled.
+      operationId: patch_api_admin_followups_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{ status }'
+      responses:
+        '200':
+          description: '{ id, status }'
+      security:
+      - bearerAuth: []
+  /api/admin/login:
+    post:
+      summary: Authenticate an admin and issue a JWT.
+      description: Authenticate an admin and issue a JWT.
+      operationId: post_api_admin_login
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{ email, password }'
+      responses:
+        '200':
+          description: '{ access_token }'
+  /api/chat:
+    post:
+      summary: Send a visitor message and receive a streamed grounded answer with
+        citations, or an I-don't-know fallback.
+      description: Send a visitor message and receive a streamed grounded answer with
+        citations, or an I-don't-know fallback.
+      operationId: post_api_chat
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{ conversation_id, message }'
+      responses:
+        '200':
+          description: 'text/event-stream of answer tokens then { citations[] } or
+            { fallback: true }'
+  /api/conversations:
+    post:
+      summary: Start a new chat session/conversation (fresh context).
+      description: Start a new chat session/conversation (fresh context).
+      operationId: post_api_conversations
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{ session_id? }'
+      responses:
+        '200':
+          description: '{ conversation_id, session_id }'
+  /api/followups:
+    post:
+      summary: Submit a consent-gated follow-up request; blocked without explicit
+        consent.
+      description: Submit a consent-gated follow-up request; blocked without explicit
+        consent.
+      operationId: post_api_followups
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{ conversation_id?, contact_email, question, consent_given
+                }'
+      responses:
+        '200':
+          description: '{ id, status }'
+  /api/privacy-notice:
+    get:
+      summary: Return the visitor privacy notice content shown in the chat interface.
+      description: Return the visitor privacy notice content shown in the chat interface.
+      operationId: get_api_privacy_notice
+      parameters: []
+      responses:
+        '200':
+          description: '{ notice }'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    admin_users:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        password_hash:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - email
+      - password_hash
+      - created_at
+    documents:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        format:
+          type: string
+        s3_key:
+          type: string
+        status:
+          type: string
+        error_message:
+          type: string
+        uploaded_by:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - filename
+      - format
+      - s3_key
+      - status
+      - uploaded_by
+      - created_at
+      - updated_at
+    document_chunks:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        chunk_index:
+          type: integer
+        content:
+          type: string
+        embedding:
+          type: string
+      required:
+      - id
+      - document_id
+      - chunk_index
+      - content
+      - embedding
+    conversations:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        session_id:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - session_id
+      - started_at
+    messages:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversation_id:
+          type: string
+          format: uuid
+        role:
+          type: string
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - conversation_id
+      - role
+      - content
+      - created_at
+    message_citations:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        message_id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        chunk_id:
+          type: string
+          format: uuid
+      required:
+      - id
+      - message_id
+      - document_id
+    followup_requests:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversation_id:
+          type: string
+          format: uuid
+        contact_email:
+          type: string
+        question:
+          type: string
+        consent_given:
+          type: boolean
+        status:
+          type: string
+        email_delivered:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - contact_email
+      - question
+      - consent_given
+      - status
+      - email_delivered
+      - created_at
